@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Story Generator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .story-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transform: translateY(20px);
+            opacity: 0;
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .story-card.visible {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .story-output h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+        }
+
+        .selection-section {
+            margin-bottom: 25px;
+        }
+
+        .category-title {
+            color: #555;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+        }
+
+        .option-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            user-select: none;
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-option label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .checkbox-option:hover {
+            border-color: #667eea;
+            background: #f5f5f5;
+        }
+
+        .checkbox-option.selected {
+            border-color: #667eea;
+            background: #e8e8f8;
+        }
+
+        .checkbox-option input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #667eea;
+            cursor: pointer;
+        }
+
+        .generate-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            margin-top: 20px;
+        }
+
+        .generate-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .generate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .story-output {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            min-height: 150px;
+            display: none;
+        }
+
+        .story-output.visible {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .story-output p {
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+
+        .story-output strong {
+            color: #667eea;
+        }
+
+        .reset-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            margin-top: 15px;
+            font-size: 1rem;
+            transition: background 0.3s ease;
+        }
+
+        .reset-btn:hover {
+            background: #5a6268;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📖 Story Generator</h1>
+
+        <div class="story-card" id="selectionCard">
+            <h2>Select Your Story Elements</h2>
+
+            <div class="selection-section">
+                <div class="category-title">📊 Story Structure (Chart)</div>
+                <div class="option-list" id="chartOptions">
+                    <!-- Options rendered by JS -->
+                </div>
+            </div>
+
+            <div class="selection-section">
+                <div class="category-title">🌍 Location</div>
+                <div class="option-list" id="locationOptions">
+                    <!-- Options rendered by JS -->
+                </div>
+            </div>
+
+            <div class="selection-section">
+                <div class="category-title">🔧 Object</div>
+                <div class="option-list" id="objectOptions">
+                    <!-- Options rendered by JS -->
+                </div>
+            </div>
+
+            <div class="selection-section">
+                <div class="category-title">🎭 Situation</div>
+                <div class="option-list" id="situationOptions">
+                    <!-- Options rendered by JS -->
+                </div>
+            </div>
+
+            <button class="generate-btn" id="generateBtn" disabled>Generate Story</button>
+        </div>
+
+        <div class="story-output" id="storyOutput">
+            <h2>Your Story:</h2>
+            <p><span id="storyText">Select options and click Generate Story to begin!</span></p>
+            <a href="#" class="reset-btn" id="resetBtn">Generate Another</a>
+        </div>
+    </div>
+
+    <script>
+        // Story data - templates with placeholders
+        const storyData = {
+            charts: [
+                { id: 'hero', label: "Hero's Journey", category: 'chart' },
+                { id: 'three-act', label: 'Three-Act Structure', category: 'chart' },
+                { id: 'mystery', label: 'Mystery/Detective', category: 'chart' },
+                { id: 'romance', label: 'Romance Arc', category: 'chart' }
+            ],
+            locations: [
+                { id: 'space', label: 'Spaceship', category: 'location' },
+                { id: 'castle', label: 'Ancient Castle', category: 'location' },
+                { id: 'city', label: 'Neon Megalopolis', category: 'location' },
+                { id: 'village', label: 'Cozy Village', category: 'location' }
+            ],
+            objects: [
+                { id: 'artifact', label: 'Magic Artifact', category: 'object' },
+                { id: 'key', label: 'Golden Key', category: 'object' },
+                { id: 'letter', label: 'Secret Letter', category: 'object' },
+                { id: 'mirror', label: 'Enchanted Mirror', category: 'object' }
+            ],
+            situations: [
+                { id: 'lost', label: 'Lost in unfamiliar territory', category: 'situation' },
+                { id: 'treasure', label: 'Quest for hidden treasure', category: 'situation' },
+                { id: 'rescue', label: 'Rescue mission', category: 'situation' },
+                { id: 'election', label: 'High-stakes election', category: 'situation' }
+            ]
+        };
+
+        // Initialize state
+        let selectedChart = null;
+        let selectedLocation = null;
+        let selectedObject = null;
+        let selectedSituation = null;
+
+        // DOM Elements
+        const chartOptions = document.getElementById('chartOptions');
+        const locationOptions = document.getElementById('locationOptions');
+        const objectOptions = document.getElementById('objectOptions');
+        const situationOptions = document.getElementById('situationOptions');
+        const generateBtn = document.getElementById('generateBtn');
+        const storyOutput = document.getElementById('storyOutput');
+        const storyText = document.getElementById('storyText');
+        const resetBtn = document.getElementById('resetBtn');
+
+        // Render checkbox options
+        function renderOptions(optionsContainer, items) {
+            optionsContainer.innerHTML = '';
+            items.forEach(item => {
+                const label = document.createElement('label');
+                label.className = 'checkbox-option';
+                label.innerHTML = `
+                    <input type="checkbox" value="${item.id}" class="checkbox-input">
+                    <span>${item.label}</span>
+                `;
+                // Store category on the input element
+                label.querySelector('.checkbox-input').category = item.category;
+                label.querySelector('.checkbox-input').itemId = item.id;
+                label.querySelector('.checkbox-input').addEventListener('change', handleCheckboxChange);
+                optionsContainer.appendChild(label);
+            });
+        }
+
+        function handleCheckboxChange() {
+            const input = this;
+            const isChecked = input.checked;
+            
+            // Uncheck all other checkboxes in the same options container
+            const allCheckboxes = input.parentElement.querySelectorAll('input[type="checkbox"]');
+            allCheckboxes.forEach(cb => {
+                cb.checked = cb === input;
+            });
+            
+            // Update selection based on which category
+            selectItemByCategory(input.category, isChecked ? input.itemId : null);
+        }
+
+        function selectItemByCategory(category, itemId) {
+            switch(category) {
+                case 'chart':
+                    selectedChart = itemId ? storyData.charts.find(c => c.id === itemId) : null;
+                    break;
+                case 'location':
+                    selectedLocation = itemId ? storyData.locations.find(l => l.id === itemId) : null;
+                    break;
+                case 'object':
+                    selectedObject = itemId ? storyData.objects.find(o => o.id === itemId) : null;
+                    break;
+                case 'situation':
+                    selectedSituation = itemId ? storyData.situations.find(s => s.id === itemId) : null;
+                    break;
+            }
+            updateGenerateButton();
+        }
+
+        // Update generate button state
+        function updateGenerateButton() {
+            const canGenerate = selectedChart && selectedLocation && selectedObject && selectedSituation;
+            generateBtn.disabled = !canGenerate;
+            generateBtn.style.opacity = canGenerate ? '1' : '0.5';
+        }
+
+        // Generate story
+        function generateStory() {
+            if (!selectedChart || !selectedLocation || !selectedObject || !selectedSituation) return;
+
+            // Template-based story generation
+            const storyTemplates = [
+                `"Once upon a time, in a world shaped by the ${selectedChart.label}, our story begins in ${selectedLocation.label}. Here, ${selectedSituation.label.toLowerCase()} takes center stage. At the heart of it all is the ${selectedObject.label}, a object that changes everything."`,
+                
+                `In the realm of ${selectedChart.label}, our tale unfolds within the ${selectedLocation.label}. The central situation - ${selectedSituation.label.toLowerCase()} - brings our protagonist face-to-face with the ${selectedObject.label}. This ${selectedSituation.label.toLowerCase()} forces difficult choices and unexpected adventures.`,
+                
+                `The ${selectedChart.label} structure guides our story as we enter the ${selectedLocation.label}. With ${selectedSituation.label.toLowerCase()} as the driving force, our characters must navigate challenges centered around the ${selectedObject.label}. Will they succeed or learn a valuable lesson?`
+            ];
+
+            const randomTemplate = storyTemplates[Math.floor(Math.random() * storyTemplates.length)];
+            const story = randomTemplate
+                .replace('${selectedChart.label}', selectedChart.label)
+                .replace('${selectedLocation.label}', selectedLocation.label)
+                .replace('${selectedObject.label}', selectedObject.label)
+                .replace('${selectedSituation.label}', selectedSituation.label);
+
+            storyText.textContent = story;
+            storyOutput.classList.add('visible');
+            
+            // Animate story card in
+            const card = storyOutput.parentElement;
+            card.classList.add('visible');
+        }
+
+        // Reset selections
+        function resetSelections() {
+            selectedChart = null;
+            selectedLocation = null;
+            selectedObject = null;
+            selectedSituation = null;
+            
+            // Uncheck all checkboxes
+            document.querySelectorAll('.checkbox-input').forEach(cb => cb.checked = false);
+            
+            updateGenerateButton();
+            storyOutput.classList.remove('visible');
+        }
+
+        // Event listeners
+        generateBtn.addEventListener('click', generateStory);
+        resetBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            resetSelections();
+        });
+
+        // Initialize
+        renderOptions(chartOptions, storyData.charts);
+        renderOptions(locationOptions, storyData.locations);
+        renderOptions(objectOptions, storyData.objects);
+        renderOptions(situationOptions, storyData.situations);
+        updateGenerateButton();
+    </script>
+</body>
+</html>
