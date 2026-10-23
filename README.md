@@ -4,7 +4,9 @@ A single-page story generator. Pick a story structure, location, object and situ
 
 ## Live demo
 
-Deployed on Vercel from the `jolaschool2023/marie` GitHub repository.
+https://marie-lake.vercel.app
+
+Deployed on Vercel and connected to the `jolaschool2023/marie` GitHub repository, so every push to `main` deploys automatically.
 
 ## Run locally
 
